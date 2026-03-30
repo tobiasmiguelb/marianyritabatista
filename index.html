@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vídeo</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: black;
+      overflow: hidden;
+    }
+
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    /* BOTÃO CENTRAL */
+    #botao {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #botao img {
+      width: 200px; /* pode ajustar o tamanho */
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <video id="video" playsinline>
+    <source src="video.mp4" type="video/mp4">
+  </video>
+
+  <div id="botao">
+    <img src="cliqueaqui.png" alt="Clique aqui">
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const botao = document.getElementById("botao");
+
+    botao.addEventListener("click", () => {
+      video.muted = false;
+      video.play();
+      botao.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>
