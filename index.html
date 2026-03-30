@@ -12,18 +12,52 @@
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
+      width: 100%;
+      height: 100%;
       background: black;
       overflow: hidden;
     }
 
-    video {
+    /* CONTAINER DO VÍDEO */
+    .cinema {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: black;
+    }
+
+    video {
       width: 100vw;
-      height: 100vh;
+      height: 100dvh;
       object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    video.playing {
+      opacity: 1;
+    }
+
+    /* BORDAS CINEMATOGRÁFICAS */
+    .barra {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 10vh;
+      background: black;
+      z-index: 5;
+      transition: height 1s ease;
+    }
+
+    .barra.top {
+      top: 0;
+    }
+
+    .barra.bottom {
+      bottom: 0;
     }
 
     /* BOTÃO CENTRAL */
@@ -34,20 +68,33 @@
       transform: translate(-50%, -50%);
       cursor: pointer;
       z-index: 10;
+      transition: opacity 0.5s ease;
     }
 
     #botao img {
-      width: 200px; /* pode ajustar o tamanho */
-      height: auto;
+      width: 200px;
     }
+
+    #botao.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
   </style>
 </head>
 <body>
 
-  <video id="video" playsinline>
-    <source src="video.mp4" type="video/mp4">
-  </video>
+  <div class="cinema">
+    <video id="video" playsinline>
+      <source src="video.mp4" type="video/mp4">
+    </video>
+  </div>
 
+  <!-- BARRAS PRETAS -->
+  <div class="barra top"></div>
+  <div class="barra bottom"></div>
+
+  <!-- BOTÃO -->
   <div id="botao">
     <img src="cliqueaqui.png" alt="Clique aqui">
   </div>
@@ -56,10 +103,32 @@
     const video = document.getElementById("video");
     const botao = document.getElementById("botao");
 
-    botao.addEventListener("click", () => {
+    botao.addEventListener("click", async () => {
+      // Som liberado
       video.muted = false;
+
+      // Tentar fullscreen (tipo F11)
+      const el = document.documentElement;
+      if (el.requestFullscreen) {
+        await el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        await el.webkitRequestFullscreen();
+      } else if (el.msRequestFullscreen) {
+        await el.msRequestFullscreen();
+      }
+
+      // Tocar vídeo
       video.play();
-      botao.style.display = "none";
+
+      // Fade do botão
+      botao.classList.add("hidden");
+
+      // Fade do vídeo
+      video.classList.add("playing");
+
+      // Animação das barras (opcional: diminui um pouco)
+      document.querySelector(".top").style.height = "6vh";
+      document.querySelector(".bottom").style.height = "6vh";
     });
   </script>
 
