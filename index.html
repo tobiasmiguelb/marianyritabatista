@@ -19,7 +19,7 @@
       overflow: hidden;
     }
 
-    /* CONTAINER DO VÍDEO */
+    /* CONTAINER */
     .cinema {
       position: fixed;
       inset: 0;
@@ -34,33 +34,30 @@
       height: 100dvh;
       object-fit: cover;
       opacity: 0;
-      transition: opacity 1.5s ease;
+      transform: scale(1.05); /* leve zoom inicial */
+      transition: opacity 1.5s ease, transform 6s ease;
     }
 
     video.playing {
       opacity: 1;
+      transform: scale(1); /* zoom suave entrando */
     }
 
-    /* BORDAS CINEMATOGRÁFICAS */
+    /* BARRAS CINEMA */
     .barra {
       position: fixed;
       left: 0;
       width: 100%;
-      height: 10vh;
+      height: 12vh;
       background: black;
       z-index: 5;
-      transition: height 1s ease;
+      transition: height 1.2s ease;
     }
 
-    .barra.top {
-      top: 0;
-    }
+    .top { top: 0; }
+    .bottom { bottom: 0; }
 
-    .barra.bottom {
-      bottom: 0;
-    }
-
-    /* BOTÃO CENTRAL */
+    /* BOTÃO */
     #botao {
       position: fixed;
       top: 50%;
@@ -68,7 +65,7 @@
       transform: translate(-50%, -50%);
       cursor: pointer;
       z-index: 10;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
     #botao img {
@@ -77,7 +74,26 @@
 
     #botao.hidden {
       opacity: 0;
+      transform: translate(-50%, -40%);
       pointer-events: none;
+    }
+
+    /* TEXTO GIRAR */
+    #gire {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      z-index: 10;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0.3; }
     }
 
   </style>
@@ -90,7 +106,7 @@
     </video>
   </div>
 
-  <!-- BARRAS PRETAS -->
+  <!-- BARRAS -->
   <div class="barra top"></div>
   <div class="barra bottom"></div>
 
@@ -99,36 +115,45 @@
     <img src="cliqueaqui.png" alt="Clique aqui">
   </div>
 
+  <!-- DICA -->
+  <div id="gire">🔄 Para melhor experiência, use o celular na horizontal</div>
+
   <script>
     const video = document.getElementById("video");
     const botao = document.getElementById("botao");
 
     botao.addEventListener("click", async () => {
-      // Som liberado
       video.muted = false;
 
-      // Tentar fullscreen (tipo F11)
       const el = document.documentElement;
+
+      // FULLSCREEN (tipo F11)
       if (el.requestFullscreen) {
         await el.requestFullscreen();
-      } else if (el.webkitRequestFullscreen) {
-        await el.webkitRequestFullscreen();
-      } else if (el.msRequestFullscreen) {
-        await el.msRequestFullscreen();
       }
 
-      // Tocar vídeo
+      // FORÇAR PAISAGEM (Chrome Android)
+      if (screen.orientation && screen.orientation.lock) {
+        try {
+          await screen.orientation.lock("landscape");
+        } catch (err) {
+          console.log("Orientação não suportada:", err);
+        }
+      }
+
+      // PLAY
       video.play();
 
-      // Fade do botão
+      // ANIMAÇÕES
       botao.classList.add("hidden");
-
-      // Fade do vídeo
       video.classList.add("playing");
 
-      // Animação das barras (opcional: diminui um pouco)
-      document.querySelector(".top").style.height = "6vh";
-      document.querySelector(".bottom").style.height = "6vh";
+      document.querySelector(".top").style.height = "8vh";
+      document.querySelector(".bottom").style.height = "8vh";
+
+      // Remove dica
+      const gire = document.getElementById("gire");
+      gire.style.opacity = "0";
     });
   </script>
 
